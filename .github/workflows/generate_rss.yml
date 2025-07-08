@@ -26,10 +26,11 @@ jobs:
     - name: RSS üret
       run: python zaytung_rss_generator.py
 
-    - name: Commit ve Push
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Actions"
-        git add *.xml
-        git commit -m "🔄 Otomatik Zaytung RSS güncellemesi"
-        git push
+    - name: Commit and push RSS files
+  run: |
+    git config --local user.email "action@github.com"
+    git config --local user.name "GitHub Actions"
+    git add *.xml || echo "No XML files to add"
+    git diff --cached --quiet || git commit -m "🔄 Otomatik Zaytung RSS güncellemesi"
+    git push
+
