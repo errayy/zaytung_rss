@@ -13,7 +13,11 @@ CATEGORIES = {
 
 def fetch_category_news(category_name, url):
     print(f"🔹 {category_name} haberleri çekiliyor...")
-    response = requests.get(url)
+    headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+}
+response = requests.get(url, headers=headers)
+
     response.encoding = 'utf-8'
     soup = BeautifulSoup(response.text, 'html.parser')
     haberler = soup.find_all('div', class_='haber', limit=10)
