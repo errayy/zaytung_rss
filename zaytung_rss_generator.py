@@ -13,16 +13,24 @@ CATEGORIES = {
 
 def fetch_category_news(category_name, url):
     print(f"🔹 {category_name} haberleri çekiliyor...")
+    
+    # User-Agent ekledik
     headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
-}
-response = requests.get(url, headers=headers)
-
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+    }
+    response = requests.get(url, headers=headers)
     response.encoding = 'utf-8'
+    
+    # HTML içeriği kontrol edelim
+    print(response.text[:1000])  # İlk 1000 karakteri yazdıralım
+    
     soup = BeautifulSoup(response.text, 'html.parser')
-    haberler = soup.find_all('div', class_='haber', limit=10)
-    news_list = []
 
+    # Burada güncel class'ları kullanmamız gerekebilir
+    # Örnek: haberler = soup.find_all('div', class_='news', limit=10)
+    haberler = soup.find_all('div', class_='item', limit=10)  # 'item' class'ını deniyoruz
+
+    news_list = []
     for haber in haberler:
         a_tag = haber.find('a')
         img_tag = haber.find('img')
@@ -41,6 +49,10 @@ response = requests.get(url, headers=headers)
                 'desc': desc if desc else title,
                 'image': image_url
             })
+    
+    # Haberlerin kontrol edilmesi
+    print(f"Toplam haber sayısı: {len(news_list)}")  # Haber sayısını kontrol et
+
     return news_list
 
 def generate_rss_for_category(category_name, news_list):
