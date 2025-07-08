@@ -2,35 +2,34 @@ name: Generate Zaytung RSS Feeds
 
 on:
   schedule:
-    - cron: '0 6 * * *'   # Her sabah 09:00'da (UTC+3) otomatik çalışır
-  workflow_dispatch:       # Elle çalıştırabilirsin
+    - cron: '0 6 * * *'   # Her gün sabah 09:00 (UTC+3)
+  workflow_dispatch:       # Elle tetikleme
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Repo klonla
+    - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Python kurulumu
+    - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
 
-    - name: Bağımlılıkları kur
+    - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: RSS üret
+    - name: Generate RSS Feeds
       run: python zaytung_rss_generator.py
 
     - name: Commit and push RSS files
-  run: |
-    git config --local user.email "action@github.com"
-    git config --local user.name "GitHub Actions"
-    git add *.xml || echo "No XML files to add"
-    git diff --cached --quiet || git commit -m "🔄 Otomatik Zaytung RSS güncellemesi"
-    git push
-
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Actions"
+        git add *.xml || echo "No XML files to add"
+        git diff --cached --quiet || git commit -m "🔄 Otomatik Zaytung RSS güncellemesi"
+        git push
